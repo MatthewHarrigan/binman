@@ -23,21 +23,21 @@ const postForm = async () => {
 const getHtml = async () => {
     const d = new Date();
     const fileName = `cache/${d.toLocaleDateString().replaceAll('/', '-')}.html`;
-    
+
     try {
         const cachedFile = await readFile(fileName, 'utf8');
         return cachedFile;
     } catch (error) {
         if (error.code === 'ENOENT') {
-            console.log(`${fileName} File not found!`);
+            //console.log(`${fileName} File not found!`);
             const html = await postForm();
             await writeFile(fileName, html, function (err) {
                 if (err) throw err;
-                console.log('Saved!');
+                //console.log('Saved!');
             });
 
             return html;
-    
+
         } else {
             throw err;
         }
@@ -45,10 +45,10 @@ const getHtml = async () => {
 }
 
 const coloriseBins = (inputString) => {
-    inputString = inputString.replace(/Blue Bin/g, '\x1b[34mBlue Bin\x1b[0m');
-    inputString = inputString.replace(/Brown Bin/g, '\x1b[33mBrown Bin\x1b[0m');
-    inputString = inputString.replace(/Green Bin/g, '\x1b[32mGreen Bin\x1b[0m');
-    // inputString = inputString.replace(/Black \/ Grey Bin/g, '\x1b[30mBlack / Grey Bin\x1b[0m');
+    inputString = inputString.replace(/Black \/ Grey Bin/g, '\x1b[30mBlack\x1b[0m');
+    inputString = inputString.replace(/Blue Bin/g, '\x1b[34mBlue\x1b[0m');
+    inputString = inputString.replace(/Brown Bin/g, '\x1b[33mBrown\x1b[0m');
+    inputString = inputString.replace(/Green Bin/g, '\x1b[32mGreen\x1b[0m');
     return inputString;
 }
 
@@ -58,10 +58,20 @@ const getThisWeekBins = (bins) => {
         return bin.nextCollection <= new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
     });
 
+    if (thisWeek.length === 0) {
+        console.log("No bin collections scheduled for this week.");
+        return;
+    }
+
+    const nextCollectionDate = thisWeek.reduce((minDate, bin) => {
+        return bin.nextCollection < minDate ? bin.nextCollection : minDate;
+    }, new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7));
+
     const binTypes = Object.keys(bins);
     const thisWeekBinTypes = thisWeek.map(bin => binTypes[Object.values(bins).indexOf(bin)]).join(" ");
     const binStrings = coloriseBins(thisWeekBinTypes);
-    console.log(`Next bin collection ${binStrings}`);
+
+    console.log(`Next bin collection is on ${nextCollectionDate.toDateString()}: ${binStrings}`);
 }
 
 const html = await getHtml();
