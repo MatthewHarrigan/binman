@@ -45,10 +45,10 @@ const getHtml = async () => {
 }
 
 const coloriseBins = (inputString) => {
-    inputString = inputString.replace(/Black \/ Grey Bin/g, '\x1b[30mBlack\x1b[0m');
-    inputString = inputString.replace(/Blue Bin/g, '\x1b[34mBlue\x1b[0m');
-    inputString = inputString.replace(/Brown Bin/g, '\x1b[33mBrown\x1b[0m');
-    inputString = inputString.replace(/Green Bin/g, '\x1b[32mGreen\x1b[0m');
+    inputString = inputString.replace(/Black \/ Grey Bin/g, '⚫ \x1b[30mBlack\x1b[0m');
+    inputString = inputString.replace(/Blue Bin/g, '🔵 \x1b[34mBlue\x1b[0m');
+    inputString = inputString.replace(/Brown Bin/g, '🟤 \x1b[33mBrown\x1b[0m');
+    inputString = inputString.replace(/Green Bin/g, '🟢 \x1b[32mGreen\x1b[0m');
     return inputString;
 }
 
@@ -71,7 +71,8 @@ const getThisWeekBins = (bins) => {
     const thisWeekBinTypes = thisWeek.map(bin => binTypes[Object.values(bins).indexOf(bin)]).join(" ");
     const binStrings = coloriseBins(thisWeekBinTypes);
 
-    console.log(`Next bin collection is on ${nextCollectionDate.toDateString()}: ${binStrings}`);
+    console.log(`🗑️  Next bin collection is on ${nextCollectionDate.toDateString()}: ${binStrings}`);
+
 }
 
 const html = await getHtml();
